@@ -16,6 +16,7 @@ const handleAddToDo = (jobName) => {
     }
 }
 
+
 const todoRedeucer = (state = initToDoState, action) => {
     switch (action.type) {
         case ADD_TODO: {

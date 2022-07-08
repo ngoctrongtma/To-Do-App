@@ -86,7 +86,6 @@ function AppToDo(props) {
                               width="25px"
                             />
                           </span>
-
                         </li>
                       );
                   }) : null}
