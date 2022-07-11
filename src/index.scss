@@ -39,6 +39,7 @@ code {
   .show-list-to-do{
     overflow: auto;
     height: 100%;
+    box-shadow: 1px 1px 1px rgb(209, 209, 209);
     ul{
       list-style-type: none;
       padding: 15px;
@@ -52,7 +53,10 @@ code {
         font-size: 20px;
         border-bottom: solid rgb(185, 185, 185) 2px;
         .job-name{
-
+          font-size: 24px;
+          overflow: auto;
+          max-width: 65%;
+          max-height: 15%;
         }
         .job-is-done{
           text-decoration: line-through;
@@ -93,5 +97,8 @@ code {
       }
     }
   }
+}
+.btn{
+  margin-right: 5px;
 }
 

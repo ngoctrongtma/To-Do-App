@@ -1,9 +1,8 @@
 
 // declare action const
 const ADD_TODO = "ADD_TODO";
-const UPDATE_TODO = "UPDATE_TODO";
+const TOGGLE_TODO = "TOGGLE_TODO";
 const DELETE_TODO = "DELETE_TODO";
-const MARK_COMPLETE = "MARK_COMPLETE";
 
 const initToDoState = {
     list: []
@@ -15,13 +14,30 @@ const handleAddToDo = (jobName) => {
         payload: jobName
     }
 }
+const handleToggleToDo = (jobID) => { // set isDone property for job in listToDo.
+    return {
+        type: TOGGLE_TODO,
+        payload: jobID,
+    }
+}
+
+const handleDeleteToDo = (jobID) => { // set isDone property for job in listToDo.
+    return {
+        type: DELETE_TODO,
+        payload: jobID,
+    }
+}
 
 
 const todoRedeucer = (state = initToDoState, action) => {
+    // note: state and action
     switch (action.type) {
         case ADD_TODO: {
+            console.log("list", state.list, "length", state.list.length);
+            let listLength = state.list.length;
+
             const newJob = {
-                jobID: state.list.length,
+                jobID: listLength === 0 ? 0 : state.list[listLength - 1].jobID + 1,
                 name: action.payload,
                 isDone: false,
             }
@@ -30,17 +46,33 @@ const todoRedeucer = (state = initToDoState, action) => {
                 list: [...state.list, newJob]
             }
         }
-        case UPDATE_TODO: {
-
+        case TOGGLE_TODO: {
+            const listTemp = [...state.list];
+            for (let i = 0; i < listTemp.length; i++) {
+                if (listTemp[i].jobID === action.payload) {
+                    listTemp[i].isDone = !listTemp[i].isDone;
+                }
+            }
+            return {
+                ...state,
+                list: listTemp
+            }
         }
         case DELETE_TODO: {
-
+            console.log("delete job");
+            const listTemp = [...state.list];
+            const valueToDelete = action.payload;
+            console.log("list to delete:", listTemp, "value delete", valueToDelete)
+            const newList = listTemp.filter(item => item.jobID !== valueToDelete);
+            console.log("list after delete:", newList);
+            return {
+                ...state,
+                list: newList
+            }
         }
-        case MARK_COMPLETE: {
 
-        }
         default: return state;
     }
 }
-export { handleAddToDo }
+export { handleAddToDo, handleToggleToDo, handleDeleteToDo }
 export default todoRedeucer;

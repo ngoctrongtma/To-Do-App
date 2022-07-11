@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import AppToDo from '../component/AppToDo';
-import { handleAddToDo } from '../redux/todoSlice';
+import { handleAddToDo, handleToggleToDo, handleDeleteToDo } from '../redux/todoSlice';
 import store from '../redux/store'
 
 const mapStateToProps = (state) => { // map state of redux to props of conponent
@@ -8,7 +8,11 @@ const mapStateToProps = (state) => { // map state of redux to props of conponent
         todos: state.listToDo.list
     }
 }
-const mapActionToProps = {
-    addToDo: handleAddToDo
+const mapDispatchToProps = (dispatch) => {
+    return {
+        handleAddToDo: (jobName) => dispatch(handleAddToDo(jobName)),
+        handleToggleToDo: (jobID) => dispatch(handleToggleToDo(jobID)),
+        handleDeleteToDo: (jobID) => dispatch(handleDeleteToDo(jobID))
+    }
 }
-export default connect(mapStateToProps, mapActionToProps)(AppToDo);
+export default connect(mapStateToProps, mapDispatchToProps)(AppToDo);

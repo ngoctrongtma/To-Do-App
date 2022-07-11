@@ -1,38 +1,33 @@
 import { Button, Modal } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Col from 'react-bootstrap/esm/Col';
 import Container from 'react-bootstrap/esm/Container';
 import InputGroup from 'react-bootstrap/esm/InputGroup';
 import FormControl from 'react-bootstrap/esm/FormControl';
-import { ListOutline, CloseOutline, CheckmarkOutline } from 'react-ionicons'
+import { ListOutline, CloseOutline, CheckmarkOutline, TrashOutline, EllipsisHorizontalOutline } from 'react-ionicons'
 import { useState, useRef } from 'react';
-import store from "../redux/store"
+import { toast } from 'react-toastify';
+
 //======================================
 function AppToDo(props) {
   const [isShow, setIsShow] = useState("All") // isShow have 3 state: All, Finish, Unfinish. default is All. use to show list to do
-  const [listToDo, setListToDo] = useState([]); // listToDo contain all job
   const [jobName, setJobName] = useState(""); // save temporary name to add to list to do
   const inputRef = useRef();
-  const stringTest = props.todos[0].name;
-
   function handleAddJob() {
     if (jobName !== "") {
-      const newJob = {
-        jobID: listToDo.length,
-        name: jobName,
-        isDone: false,
-      }
-      const newListToDo = listToDo.concat([newJob]); // create new array contain old listToDo and a new Array have new job
-      setListToDo(newListToDo); // set newListToDo for listToDo
+      props.handleAddToDo(jobName);
       setJobName("");
       inputRef.current.focus();
     }
+    else {
+      alert("không được bỏ trống tên công việc")
+    }
   }
   function handleToggleJob(jobID) { // set isDone property for job in listToDo.
-    const listToDoTemp = [...listToDo];
-    const currentJob = listToDoTemp[jobID];
-    currentJob.isDone = !currentJob.isDone;
-    setListToDo(listToDoTemp);
+    props.handleToggleToDo(jobID)
+  }
+  function handleDeleteJob(jobID) {
+    props.handleDeleteToDo(jobID)
+    toast.success("Đã xóa thành công!")
   }
   return (
     <div className="App">
@@ -45,9 +40,9 @@ function AppToDo(props) {
             <div className="show-list-to-do">
               <ul>
                 {isShow === "All" ?
-                  listToDo.map((item, index) => {
+                  props.todos.map((item, index) => {
                     return (
-                      <li key={index} onClick={() => { handleToggleJob(item.jobID) }}>
+                      <li key={index} >
                         {item.isDone ?
                           <span className="job-name job-is-done">
                             {item.name}
@@ -56,49 +51,106 @@ function AppToDo(props) {
                             {item.name}
                           </span>
                         }
-                        {
-                          item.isDone ?
-                            <span className="is-done">
-                              <CheckmarkOutline
-                                color={'#0fcc12'}
-                                height="25px"
-                                width="25px"
-                              />
-                            </span>
-                            : null
-                        }
+                        <div >
+                          {
+                            item.isDone ?
+                              <Button variant="success btn" onClick={() => { handleToggleJob(item.jobID) }}>
+                                <CheckmarkOutline
+                                  color={'#fff'}
+                                  title={'Completed'}
+                                  height="20px"
+                                  width="20px"
+                                />
+                              </Button>
+                              :
+                              <Button variant="warning" onClick={() => { handleToggleJob(item.jobID) }}>
+                                <EllipsisHorizontalOutline
+                                  color={'#ffffff'}
+                                  title={'Is Doing'}
+                                  height="20px"
+                                  width="20px"
+                                />
+
+                              </Button>
+                          }
+                          <Button variant="danger btn" >
+                            <TrashOutline
+                              color={'#fff'}
+                              title={"Click to delete"}
+                              height="20px"
+                              width="20px"
+                              onClick={() => { handleDeleteJob(item.jobID) }}
+                            />
+                          </Button>
+                        </div>
+
                       </li>
                     );
                   })
                   : null}
                 {isShow === "Finish" ?
-                  listToDo.map((item, index) => {
+                  props.todos.map((item, index) => {
                     if (item.isDone)
                       return (
-                        <li key={index} onClick={() => { handleToggleJob(item.jobID) }}>
+                        <li key={index}>
                           <span className="job-name job-is-done">
                             {item.name}
                           </span>
-                          <span className="is-done">
-                            <CheckmarkOutline
-                              color={'#0fcc12'}
-                              height="25px"
-                              width="25px"
-                            />
-                          </span>
+                          <div >
+                            <Button variant="success btn" onClick={() => { handleToggleJob(item.jobID) }}>
+                              <CheckmarkOutline
+                                color={'#fff'}
+                                title={'Completed'}
+                                height="20px"
+                                width="20px"
+                              />
+                            </Button>
+                            <Button variant="danger btn" >
+                              <TrashOutline
+                                color={'#fff'}
+                                title={"Click to delete"}
+                                height="20px"
+                                width="20px"
+                                onClick={() => { handleDeleteJob(item.jobID) }}
+                              />
+                            </Button>
+                          </div>
                         </li>
                       );
+                    else
+                      return null
                   }) : null}
                 {isShow === "Unfinish" ?
-                  listToDo.map((item, index) => {
+                  props.todos.map((item, index) => {
                     if (!item.isDone)
                       return (
-                        <li key={index} onClick={() => { handleToggleJob(item.jobID) }}>
+                        <li key={index}>
                           <span className="job-name">
                             {item.name}
                           </span>
+                          <div >
+                            <Button variant="warning btn" onClick={() => { handleToggleJob(item.jobID) }}>
+                              <EllipsisHorizontalOutline
+                                color={'#fff'}
+                                title={'Is Doing'}
+                                height="20px"
+                                width="20px"
+                              />
+                            </Button>
+                            <Button variant="danger btn" >
+                              <TrashOutline
+                                color={'#fff'}
+                                title={"Click to delete"}
+                                height="20px"
+                                width="20px"
+                                onClick={() => { handleDeleteJob(item.jobID) }}
+                              />
+                            </Button>
+                          </div>
                         </li>
                       );
+                    else
+                      return null
                   }) : null}
               </ul>
             </div>
