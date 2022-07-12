@@ -33,7 +33,6 @@ const todoRedeucer = (state = initToDoState, action) => {
     // note: state and action
     switch (action.type) {
         case ADD_TODO: {
-            console.log("list", state.list, "length", state.list.length);
             let listLength = state.list.length;
 
             const newJob = {
@@ -59,18 +58,14 @@ const todoRedeucer = (state = initToDoState, action) => {
             }
         }
         case DELETE_TODO: {
-            console.log("delete job");
             const listTemp = [...state.list];
             const valueToDelete = action.payload;
-            console.log("list to delete:", listTemp, "value delete", valueToDelete)
             const newList = listTemp.filter(item => item.jobID !== valueToDelete);
-            console.log("list after delete:", newList);
             return {
                 ...state,
                 list: newList
             }
         }
-
         default: return state;
     }
 }
